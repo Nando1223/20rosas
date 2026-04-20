@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>20 Rosas para Bri 🌹</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:    #e8215a;
+      --rose2:   #ff6b9d;
+      --gold:    #f9d776;
+      --cream:   #fff5f8;
+      --dark:    #1a0a10;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: var(--dark);
+      font-family: 'Lato', sans-serif;
+      user-select: none;
+    }
+
+    /* ————————————— CANVAS DE FONDO ————————————— */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ————————————— PANTALLA INTRO ————————————— */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      background: radial-gradient(ellipse at center, #3d0a1e 0%, #1a0a10 70%);
+      animation: fadeInIntro 1.2s ease forwards;
+    }
+
+    @keyframes fadeInIntro {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #intro.hide {
+      animation: fadeOutIntro 1.5s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fadeOutIntro {
+      to { opacity: 0; transform: scale(1.05); }
+    }
+
+    .intro-rose { font-size: clamp(72px, 20vw, 120px); animation: pulse 2s ease-in-out infinite; }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1);    filter: drop-shadow(0 0 20px #e8215a88); }
+      50%      { transform: scale(1.1); filter: drop-shadow(0 0 40px #e8215acc); }
+    }
+
+    .intro-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(32px, 10vw, 60px);
+      color: var(--gold);
+      text-align: center;
+      text-shadow: 0 0 30px #f9d77688;
+      line-height: 1.2;
+    }
+
+    .intro-sub {
+      font-size: clamp(14px, 4vw, 18px);
+      color: #ffb3c8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 0.8; }
+      50%      { opacity: 0.3; }
+    }
+
+    #btn-start {
+      margin-top: 12px;
+      padding: 16px 48px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--rose), #b50040);
+      color: #fff;
+      font-size: 18px;
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 30px #e8215a66, 0 4px 15px #0005;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    #btn-start:hover, #btn-start:active {
+      transform: scale(1.07);
+      box-shadow: 0 0 50px #e8215aaa, 0 4px 20px #0008;
+    }
+
+    /* ————————————— MAIN EXPERIENCE ————————————— */
+    #main {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #main.show {
+      display: flex;
+      animation: fadeInMain 1.5s ease forwards;
+    }
+
+    @keyframes fadeInMain {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ————————————— HERO ————————————— */
+    .hero {
+      min-height: 100dvh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--rose2);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: slideUp 1s ease 0.5s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(48px, 14vw, 90px);
+      line-height: 1.1;
+      color: #fff;
+      text-shadow: 0 0 40px #e8215a55;
+      opacity: 0;
+      animation: slideUp 1s ease 0.8s forwards;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--gold), #ffb347);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      margin-top: 20px;
+      font-size: clamp(15px, 4vw, 20px);
+      color: #d4a0b0;
+      max-width: 340px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: slideUp 1s ease 1.1s forwards;
+    }
+
+    .hero-date {
+      margin-top: 32px;
+      font-size: clamp(13px, 3.5vw, 16px);
+      color: var(--gold);
+      letter-spacing: 3px;
+      opacity: 0;
+      animation: slideUp 1s ease 1.4s forwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-hint {
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: slideUp 1s ease 2s forwards;
+    }
+
+    .scroll-hint span { font-size: 12px; letter-spacing: 2px; color: #ffffff55; text-transform: uppercase; }
+    .scroll-arrow {
+      width: 24px; height: 24px;
+      border-right: 2px solid #ffffff44;
+      border-bottom: 2px solid #ffffff44;
+      transform: rotate(45deg);
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%,100% { transform: rotate(45deg) translateY(0); }
+      50%      { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* ————————————— ROSAS SECTION ————————————— */
+    .roses-section {
+      width: 100%;
+      padding: 60px 20px 40px;
+      text-align: center;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--rose2);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(32px, 9vw, 52px);
+      color: #fff;
+      margin-bottom: 48px;
+      text-shadow: 0 0 30px #e8215a44;
+    }
+
+    .roses-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    @media(max-width:360px) { .roses-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .rose-card {
+      aspect-ratio: 1;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(232,33,90,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .3s, box-shadow .3s;
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    .rose-card.revealed {
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    .rose-card:hover, .rose-card:active {
+      transform: scale(1.1) rotate(-2deg);
+      border-color: var(--rose);
+      box-shadow: 0 0 25px #e8215a55, 0 8px 25px #0008;
+    }
+
+    .rose-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(255,107,157,0.15), transparent 70%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .rose-card:hover::before { opacity: 1; }
+
+    .rose-emoji { font-size: clamp(24px, 7vw, 36px); }
+
+    .rose-num {
+      font-size: 10px;
+      color: #ffffff44;
+      margin-top: 4px;
+      font-family: 'Dancing Script', cursive;
+      letter-spacing: 1px;
+    }
+
+    /* ————————————— MODAL ————————————— */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(10,2,6,0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: linear-gradient(145deg, #2d0a18, #1a0510);
+      border: 1px solid rgba(232,33,90,0.3);
+      border-radius: 28px;
+      padding: 40px 32px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 60px #e8215a22, 0 30px 80px #0008;
+      transform: scale(0.8) translateY(30px);
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+      position: relative;
+    }
+
+    .modal-overlay.open .modal-box { transform: scale(1) translateY(0); }
+
+    .modal-rose { font-size: 64px; margin-bottom: 16px; animation: spin3d 4s linear infinite; }
+
+    @keyframes spin3d {
+      0%   { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    .modal-num {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--rose2);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .modal-msg {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(22px, 6vw, 28px);
+      color: var(--gold);
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .modal-close {
+      margin-top: 8px;
+      padding: 12px 36px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--rose), #b50040);
+      color: #fff;
+      font-size: 16px;
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px #e8215a55;
+      transition: transform .2s;
+    }
+
+    .modal-close:active { transform: scale(0.95); }
+
+    /* ————————————— MENSAJE FINAL ————————————— */
+    .final-section {
+      width: 100%;
+      padding: 60px 24px 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .heart-divider {
+      font-size: 28px;
+      margin-bottom: 40px;
+      animation: heartbeat 1.2s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.25); }
+    }
+
+    .final-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(36px, 11vw, 64px);
+      color: #fff;
+      line-height: 1.2;
+      text-shadow: 0 0 40px #e8215a55;
+      margin-bottom: 24px;
+    }
+
+    .final-msg {
+      font-size: clamp(15px, 4vw, 18px);
+      color: #c08090;
+      line-height: 1.9;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .final-msg strong { color: var(--rose2); font-weight: 400; }
+
+    .final-signature {
+      margin-top: 48px;
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(22px, 7vw, 36px);
+      color: var(--gold);
+      text-shadow: 0 0 20px #f9d77666;
+    }
+
+    .final-hearts {
+      margin-top: 24px;
+      font-size: 28px;
+      animation: fadeIn 2s ease infinite alternate;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0.4; }
+      to   { opacity: 1; }
+    }
+
+    /* ————————————— CONFETTI ————————————— */
+    .confetti-piece {
+      position: fixed;
+      top: -20px;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+      pointer-events: none;
+      z-index: 300;
+    }
+
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CANVAS FONDO -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- PANTALLA INTRO -->
+<div id="intro">
+  <div class="intro-rose">🌹</div>
+  <div class="intro-title">Para ti,<br/><span style="color:#ff6b9d">Bri</span></div>
+  <div class="intro-sub">20 de Abril · Algo especial</div>
+  <button id="btn-start">Abrir mi sorpresa 🌹</button>
+</div>
+
+<!-- EXPERIENCIA PRINCIPAL -->
+<div id="main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-badge">✨ Solo para ti ✨</p>
+    <h1 class="hero-title">20 Rosas<br/>para <span>Bri</span></h1>
+    <p class="hero-sub">Cada rosa tiene un mensaje especial guardado solo para ti.</p>
+    <p class="hero-date">🌹 20 de Abril 🌹</p>
+    <div class="scroll-hint">
+      <span>Descubre tus rosas</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ROSAS -->
+  <section class="roses-section">
+    <p class="section-label">🌹 Tus 20 rosas 🌹</p>
+    <h2 class="section-title">Toca cada una</h2>
+    <div class="roses-grid" id="roses-grid"></div>
+  </section>
+
+  <!-- MENSAJE FINAL -->
+  <section class="final-section">
+    <div class="heart-divider">💖</div>
+    <h2 class="final-title">Feliz 20<br/>de Abril</h2>
+    <p class="final-msg">
+      Hoy quise que tuvieras algo que te hiciera sonreír.<br/><br/>
+      Cada rosa que tocaste guarda un pedacito de lo mucho que
+      <strong>te admiro, te aprecio y te quiero</strong>.<br/><br/>
+      Espero que este día sea tan bonito como tú.
+    </p>
+    <div class="final-signature">Con todo el cariño 🌹</div>
+    <div class="final-hearts">🌹💖🌹💖🌹</div>
+  </section>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-rose" id="modal-rose">🌹</div>
+    <p class="modal-num" id="modal-num">Rosa #1</p>
+    <p class="modal-msg" id="modal-msg">Mensaje aquí</p>
+    <button class="modal-close" onclick="closeModal()">💕 Gracias</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// MENSAJES — uno por cada rosa
+// ============================================================
+const messages = [
+  "Eres tan única que el mundo brilla diferente cuando tú estás.",
+  "Tu sonrisa tiene el poder de iluminar cualquier cuarto oscuro.",
+  "Tienes una fuerza que admiro profundamente.",
+  "Eres de esas personas que hacen que todo valga la pena.",
+  "Tu risa es una de las cosas más bonitas del universo.",
+  "Gracias por existir y por ser exactamente como eres.",
+  "Tienes una magia especial que pocas personas tienen.",
+  "El mundo es mejor lugar con tu presencia en él.",
+  "Eres capaz de todo lo que te propones, sin duda.",
+  "Cada día que te conozco, te admiro más.",
+  "Tienes un corazón que vale oro puro.",
+  "Eres increíblemente valiente aunque a veces no lo sientas.",
+  "Tu energía contagia y levanta a todos a tu alrededor.",
+  "Mereces todo lo bonito que la vida tiene para ofrecer.",
+  "Eres una persona extraordinaria, no lo olvides nunca.",
+  "Tu creatividad y forma de ver el mundo me asombra.",
+  "Gracias por cada momento compartido, todos cuentan.",
+  "Eres luz en los días grises de quienes te rodean.",
+  "Hoy y siempre, que seas muy, muy feliz.",
+  "Esta última rosa es la más especial: es solo para decirte que eres INCREÍBLE. 🌹💖",
+];
+
+const roseEmojis = ["🌹","🌸","🌺","💐","🌷","🌹","🌸","🌺","🌷","💐",
+                    "🌹","🌸","🌺","🌷","💐","🌹","🌸","🌺","🌷","🌹"];
+
+// ============================================================
+// CANVAS PARTÍCULAS (pétalos de fondo)
+// ============================================================
+const canvas = document.getElementById('bg-canvas');
+const ctx    = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const PETALS = [];
+const PETAL_COUNT = 60;
+
+function randomPetal() {
+  return {
+    x:     Math.random() * W,
+    y:     -20 - Math.random() * H,
+    r:     4 + Math.random() * 8,
+    speed: 0.5 + Math.random() * 1.5,
+    drift: (Math.random() - 0.5) * 0.8,
+    rot:   Math.random() * Math.PI * 2,
+    rotS:  (Math.random() - 0.5) * 0.04,
+    alpha: 0.3 + Math.random() * 0.5,
+    hue:   320 + Math.random() * 40,
+  };
+}
+
+for (let i = 0; i < PETAL_COUNT; i++) {
+  const p = randomPetal();
+  p.y = Math.random() * H; // scatter initial
+  PETALS.push(p);
+}
+
+function drawPetal(p) {
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.rot);
+  ctx.globalAlpha = p.alpha;
+  ctx.fillStyle = `hsl(${p.hue},80%,60%)`;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, p.r, p.r * 1.6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function animBg() {
+  // deep dark gradient background
+  const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H));
+  grad.addColorStop(0,   '#3d0a1e');
+  grad.addColorStop(0.5, '#220612');
+  grad.addColorStop(1,   '#0d0208');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  for (const p of PETALS) {
+    p.y   += p.speed;
+    p.x   += p.drift;
+    p.rot += p.rotS;
+    if (p.y > H + 20) { Object.assign(p, randomPetal()); }
+    drawPetal(p);
+  }
+  requestAnimationFrame(animBg);
+}
+animBg();
+
+// ============================================================
+// INTRO → MAIN
+// ============================================================
+document.getElementById('btn-start').addEventListener('click', () => {
+  const intro = document.getElementById('intro');
+  const main  = document.getElementById('main');
+  intro.classList.add('hide');
+  setTimeout(() => {
+    intro.style.display = 'none';
+    main.classList.add('show');
+    revealRoses();
+  }, 1400);
+});
+
+// ============================================================
+// GRID DE ROSAS
+// ============================================================
+function revealRoses() {
+  const grid = document.getElementById('roses-grid');
+  messages.forEach((msg, i) => {
+    const card = document.createElement('div');
+    card.className = 'rose-card';
+    card.innerHTML = `<span class="rose-emoji">${roseEmojis[i]}</span><span class="rose-num">#${i+1}</span>`;
+    card.addEventListener('click', () => openModal(i, msg));
+    grid.appendChild(card);
+
+    setTimeout(() => {
+      card.classList.add('revealed');
+    }, i * 120 + 300);
+  });
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(idx, msg) {
+  document.getElementById('modal-rose').textContent = roseEmojis[idx];
+  document.getElementById('modal-num').textContent  = `Rosa #${idx + 1} de 20`;
+  document.getElementById('modal-msg').textContent  = msg;
+  document.getElementById('modal').classList.add('open');
+  launchConfetti();
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+// ============================================================
+// CONFETTI de corazones
+// ============================================================
+function launchConfetti() {
+  const colors = ['#e8215a','#ff6b9d','#f9d776','#ff85a1','#c2185b','#ffb347'];
+  const symbols = ['🌹','❤️','💖','✨','🌸','💕'];
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      const useEmoji = Math.random() > 0.5;
+      if (useEmoji) {
+        el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        el.style.cssText = `
+          position:fixed; top:-20px; font-size:${14+Math.random()*18}px;
+          left:${Math.random()*100}vw; z-index:300; pointer-events:none;
+          animation: confettiFall ${2+Math.random()*2}s linear forwards;
+        `;
+      } else {
+        el.className = 'confetti-piece';
+        el.style.left        = Math.random() * 100 + 'vw';
+        el.style.background  = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDuration = (2 + Math.random() * 2) + 's';
+        el.style.width  = (6 + Math.random() * 8) + 'px';
+        el.style.height = (6 + Math.random() * 8) + 'px';
+        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      }
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 50);
+  }
+}
+</script>
+</body>
+</html>
